@@ -36,9 +36,15 @@ void USB_Data_Handler(uint8_t usbNum, uint8_t byte_depth, uint8_t *data, uint8_t
   #endif
 
   // Check if the USB data belongs to the keyboard or the mouse
-  if (usbNum == keyboardDevice) {
+  if (data_len > 4) {
+    #ifdef DEBUG_ALL
+      printf("sendKeyboardReport\n");
+    #endif
     bleDevice.sendKeyboardReport(data, data_len); // Send keyboard report via BLE
-  } else if (usbNum == mouseDevice) {
+  } else {
+    #ifdef DEBUG_ALL
+      printf("sendMouseReport\n");
+    #endif
     bleDevice.sendMouseReport(data, data_len); // Send mouse report via BLE
   }
 }

@@ -113,14 +113,16 @@ This project transforms an ESP32 into a Bluetooth adapter that enables wireless 
 ## Project Structure
 
 ```
-📦 ESP32-USB-TO-BLE
+📦 ESP32-USB-TO-BLE (root directory)
  ┣ 📂 src/
  ┣ 📂 include/
  ┣ 📂 lib/
  ┣ 📂 test/
  ┣ 📂 images/
  ┣ 📜 platformio.ini
- ┗ 📜 README.md
+ ┣ 📜 README.md
+ ┣ 📜 LICENSE
+ ┗ 📜 ESP32-USB-TO-BLE.code-workspace
 ```
 
 ## Troubleshooting

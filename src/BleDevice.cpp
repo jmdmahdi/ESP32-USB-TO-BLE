@@ -186,3 +186,16 @@ void BleDevice::onConnect(NimBLEServer* pServer) {
 void BleDevice::onDisconnect(NimBLEServer* pServer) {
   this->connected = false;
 }
+
+void BleDevice::onWrite(NimBLECharacteristic* pCharacteristic) {
+    if (pCharacteristic == outputKeyboard) {
+        std::string value = pCharacteristic->getValue();
+        if (value.length() > 0) {
+            ledStatus = value[0];
+            ESP_LOGI(LOG_TAG, "LED Status: NUM:%d CAPS:%d SCROLL:%d", 
+                isNumLockOn() ? 1 : 0,
+                isCapsLockOn() ? 1 : 0,
+                isScrollLockOn() ? 1 : 0);
+        }
+    }
+}

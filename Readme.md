@@ -115,8 +115,17 @@ This project transforms an ESP32 into a Bluetooth adapter that enables wireless 
 ```
 📦 ESP32-USB-TO-BLE (root directory)
  ┣ 📂 src/
+ ┃  ┣ 📜 main.cpp (renamed from ESP32-USB-TO-BLE.ino)
+ ┃  ┗ 📜 BleDevice.cpp
  ┣ 📂 include/
+ ┃  ┣ 📜 BleDevice.h
+ ┃  ┣ 📜 ESP32-USB-Soft-Host.h
+ ┃  ┣ 📜 ESP32-USBSoftHost.hpp
+ ┃  ┣ 📜 usb_host.h
+ ┃  ┗ 📜 nops.hpp
  ┣ 📂 lib/
+ ┃  ┣ 📜 usb_host.c
+ ┃  ┗ 📜 ESP32-USBSoftHost.cpp
  ┣ 📂 test/
  ┣ 📂 images/
  ┣ 📜 platformio.ini

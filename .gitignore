@@ -1,0 +1,57 @@
+# PlatformIO specific
+.pio/
+.pioenvs/
+.piolibdeps/
+.pio-debug/
+
+# VSCode specific
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch/
+.vscode/*.db
+.vscode/*.db-shm
+.vscode/*.db-wal
+
+# Build outputs
+build/
+debug/
+release/
+
+# Compiled files
+*.o
+*.elf
+*.bin
+*.map
+*.hex
+
+# Dependency files
+*.d
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows specific
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.log
+*.swp
+*.swo
+*~
+
+# IDE specific (CLion, etc)
+.idea/
+cmake-build-*/
+*.iml
+
+# Environment specific
+.env
+.env.local
+
+# Debug files
+*.dSYM/

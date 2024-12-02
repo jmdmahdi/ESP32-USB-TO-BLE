@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "platformio.platformio-ide",
+    "ms-vscode.cpptools",
+    "ms-vscode.cpptools-extension-pack",
+    "ms-vscode.cpptools-themes",
+    "twxs.cmake",
+    "mhutchie.git-graph",
+    "eamodio.gitlens",
+    "ms-vscode.vscode-serial-monitor"
+  ],
+  "unwantedRecommendations": []
+}

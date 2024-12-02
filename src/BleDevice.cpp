@@ -2,11 +2,11 @@
 #include <driver/adc.h>
 #include "sdkconfig.h"
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
-#include "BLE2902.h"
-#include "BLEHIDDevice.h"
+#include <NimBLEDevice.h>
+#include <NimBLEUtils.h>
+#include <NimBLEServer.h>
+#include <NimBLEDescriptor.h>
+#include <NimBLEHIDDevice.h>
 
 #include "BleDevice.h"
 
@@ -127,11 +127,11 @@ BleDevice::BleDevice(std::string deviceName, std::string deviceManufacturer)
   : hid(0), deviceName(deviceName), deviceManufacturer(deviceManufacturer) {}
 
 void BleDevice::begin(void) {
-  BLEDevice::init(deviceName);
-  BLEServer* pServer = BLEDevice::createServer();
+  NimBLEDevice::init(deviceName);
+  NimBLEServer* pServer = NimBLEDevice::createServer();
   pServer->setCallbacks(this);
 
-  hid = new BLEHIDDevice(pServer);
+  hid = new NimBLEHIDDevice(pServer);
   inputKeyboard = hid->inputReport(KEYBOARD_ID);  // <-- input REPORTID from report map
   outputKeyboard = hid->outputReport(KEYBOARD_ID);
   inputMediaKeys = hid->inputReport(MEDIA_KEYS_ID);
@@ -144,7 +144,7 @@ void BleDevice::begin(void) {
   hid->pnp(0x02, 0x05ac, 0x820a, 0x0210);
   hid->hidInfo(0x00, 0x01);
 
-  BLESecurity* pSecurity = new BLESecurity();
+  NimBLESecurity* pSecurity = new NimBLESecurity();
 
   pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
@@ -179,10 +179,10 @@ void BleDevice::sendMouseReport(uint8_t* data, uint8_t len) {
   }
 }
 
-void BleDevice::onConnect(BLEServer* pServer) {
+void BleDevice::onConnect(NimBLEServer* pServer) {
   this->connected = true;
 }
 
-void BleDevice::onDisconnect(BLEServer* pServer) {
+void BleDevice::onDisconnect(NimBLEServer* pServer) {
   this->connected = false;
 }

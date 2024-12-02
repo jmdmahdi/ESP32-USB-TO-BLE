@@ -1,36 +1,30 @@
-#ifndef ESP32_BLE_Device_H
-#define ESP32_BLE_Device_H
-#include "sdkconfig.h"
-#if defined(CONFIG_BT_ENABLED)
+#pragma once
 
-#include "BLEHIDDevice.h"
-#include "BLECharacteristic.h"
+#include <NimBLEDevice.h>
+#include <NimBLEServer.h>
+#include <NimBLEHIDDevice.h>
 
-
-class BleDevice : public BLEServerCallbacks, public BLECharacteristicCallbacks {
+class BleDevice : public NimBLEServerCallbacks, public NimBLECharacteristicCallbacks {
 private:
-  BLEHIDDevice* hid;
-  BLECharacteristic* inputMouse;
-  BLECharacteristic* inputKeyboard;
-  BLECharacteristic* outputKeyboard;
-  BLECharacteristic* inputMediaKeys;
-  BLEAdvertising* advertising;
-  std::string deviceName;
-  std::string deviceManufacturer;
-  bool connected = false;
+    NimBLEHIDDevice* hid;
+    NimBLECharacteristic* inputMouse;
+    NimBLECharacteristic* inputKeyboard;
+    NimBLECharacteristic* outputKeyboard;
+    NimBLECharacteristic* inputMediaKeys;
+    NimBLEAdvertising* advertising;
+    std::string deviceName;
+    std::string deviceManufacturer;
+    bool connected = false;
 
 public:
-  BleDevice(std::string deviceName = "ESP32 Mouse/Keyboard", std::string deviceManufacturer = "Espressif");
-  void begin(void);
-  void end(void){};
-  void sendKeyboardReport(uint8_t* data, uint8_t len);
-  void sendMouseReport(uint8_t* data, uint8_t len);
-  bool isConnected(void);
+    BleDevice(std::string deviceName = "ESP32 Mouse/Keyboard", std::string deviceManufacturer = "Espressif");
+    void begin(void);
+    void end(void){};
+    void sendKeyboardReport(uint8_t* data, uint8_t len);
+    void sendMouseReport(uint8_t* data, uint8_t len);
+    bool isConnected(void);
 
 protected:
-  virtual void onConnect(BLEServer* pServer) override;
-  virtual void onDisconnect(BLEServer* pServer) override;
-};
-
-#endif  // CONFIG_BT_ENABLED
-#endif  // ESP32_BLE_Device_H
+    virtual void onConnect(NimBLEServer* pServer) override;
+    virtual void onDisconnect(NimBLEServer* pServer) override;
+}; 

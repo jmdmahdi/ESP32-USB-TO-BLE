@@ -59,8 +59,17 @@
    - Notes: For testing connections and resistor values
 
 3. Heat Shrink Tubing
+
    - Various sizes
    - Notes: For insulating connections
+
+4. Capacitors
+   - 100nF (0.1µF) ceramic capacitors
+     - Quantity: 6 total
+       - 2 for USB Port 1 (one each for D+ and D- to GND)
+       - 2 for USB Port 2 (one each for D+ and D- to GND)
+       - 2 for power filtering (one for each USB port VCC to GND)
+   - Notes: Ceramic capacitors recommended for better high-frequency filtering
 
 ## Pin Connections Reference
 
@@ -81,5 +90,6 @@
 
 - All resistors should be 1/4 watt rating
 - Use good quality USB connectors for reliability
-- Consider adding capacitors (100nF) for power stability
+- Ceramic capacitors are preferred over electrolytic for this application
+- Mount capacitors as close as possible to the USB connectors
 - Keep wire lengths as short as possible

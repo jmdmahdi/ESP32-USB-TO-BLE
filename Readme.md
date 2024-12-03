@@ -59,17 +59,28 @@ This project transforms an ESP32 into a Bluetooth adapter that enables wireless 
 
 ### USB Port 1 (Keyboard)
 
-- D+ (Data+): GPIO 16
-- D- (Data-): GPIO 17
-- VCC: 5V
-- GND: Ground
+- D+ (Data+): GPIO 16 (RX2)
+- D- (Data-): GPIO 17 (TX2)
+- VCC: 5V (VIN or 5V pin)
+- GND: Ground (Any GND pin)
 
 ### USB Port 2 (Mouse)
 
-- D+ (Data+): GPIO 22
-- D- (Data-): GPIO 23
-- VCC: 5V
-- GND: Ground
+- D+ (Data+): GPIO 22 (GPIO22)
+- D- (Data-): GPIO 23 (GPIO23)
+- VCC: 5V (VIN or 5V pin)
+- GND: Ground (Any GND pin)
+
+### ESP32 Board Pin Reference
+
+| Function    | GPIO Pin | Board Label | Notes                  |
+| ----------- | -------- | ----------- | ---------------------- |
+| Keyboard D+ | GPIO 16  | RX2         | Also labeled as U2RXD  |
+| Keyboard D- | GPIO 17  | TX2         | Also labeled as U2TXD  |
+| Mouse D+    | GPIO 22  | GPIO22      | General purpose IO pin |
+| Mouse D-    | GPIO 23  | GPIO23      | General purpose IO pin |
+
+**Note:** The pins used for USB communication (GPIO 16, 17, 22, 23) are multiplexed pins that can serve different functions on the ESP32. In this project, we're using them for USB communication, so they won't be available for their alternative functions while the adapter is operating.
 
 ## Setup Instructions
 

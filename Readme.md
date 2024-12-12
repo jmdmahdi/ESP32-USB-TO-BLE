@@ -8,6 +8,44 @@ This project transforms an ESP32 into a Bluetooth adapter that enables wireless 
 
 ![Project Hardware](images/image.jpg)
 
+# Hardware Requirements
+
+## 🎯 Quick Setup Guide
+
+```
+📱 ESP32-S3-USB-OTG     →  Ready to use!
+        OR
+🔧 Other ESP32 Board    →  Need USB Host Module
+```
+
+## 🚨 Important Requirements
+Your ESP32 must have USB Host support. Choose your setup:
+
+### Option 1: Recommended ⭐
+```
+┌──────────────────────┐
+│  ESP32-S3-USB-OTG   │
+│  ✅ Built-in USB    │
+│  ⚡ Full Speed      │
+│  📊 12 Mbps        │
+└──────────────────────┘
+```
+
+### Option 2: Alternative 🔄
+```
+┌──────────────────────┐
+│    Other ESP32       │──➤  USB Host Module
+│  🔌 External USB    │         Required
+│  ⚠️ Check Support   │
+└──────────────────────┘
+```
+
+## 💡 Hardware Understanding
+- 🎮 **Built-in Support**: ESP32-S3-USB-OTG has native USB host capabilities
+- 🔌 **Module Option**: Other ESP32s need external USB host module
+- ⚡ **Speed**: Full-speed USB (12 Mbps)
+- 📚 **Documentation**: [Official ESP32-S3-USB-OTG Guide](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-usb-otg/user_guide.html)
+
 ## Features
 
 - Supports both USB keyboards and mice simultaneously

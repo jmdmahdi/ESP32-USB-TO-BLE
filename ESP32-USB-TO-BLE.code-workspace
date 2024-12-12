@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "*.tcc": "cpp"
+    }
+  },
+  "arduino.path": "~/Library/Arduino15",
+  "C_Cpp.intelliSenseEngine": "Tag Parser"
+}

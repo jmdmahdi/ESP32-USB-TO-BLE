@@ -128,7 +128,7 @@ uint8_t _getCycleCount8d8(void) {
     PIN_INPUT_DISABLE(GPIO_PIN_MUX_REG[DM_PIN]); \
   }
 #define READ_BOTH_PINS (((GPIO.in & RD_MASK) << 8) >> RD_SHIFT)
-uint32_t *snd[4][2] = {
+uint32_t* snd[4][2] = {
   { &GPIO.out_w1tc, &GPIO.out_w1ts },
   { &GPIO.out_w1ts, &GPIO.out_w1tc },
   { &GPIO.out_w1tc, &GPIO.out_w1tc },
@@ -175,7 +175,7 @@ uint16_t received_NRZI_buffer[DEF_BUFF_SIZE];
 
 volatile uint8_t transmit_bits_buffer_store_cnt;
 //uint8_t transmit_bits_buffer_store[DEF_BUFF_SIZE];
-uint8_t *transmit_bits_buffer_store = (uint8_t *)&received_NRZI_buffer[0];
+uint8_t* transmit_bits_buffer_store = (uint8_t*)&received_NRZI_buffer[0];
 
 volatile uint8_t transmit_NRZI_buffer_cnt;
 uint8_t transmit_NRZI_buffer[DEF_BUFF_SIZE];
@@ -266,7 +266,8 @@ void setCPUDelay(uint8_t ticks) {
   if (!cpuDelay) {
     DEBUG_OPCODE("Malloc MAX_DELAY_CODE_SIZE=%d\n", MAX_DELAY_CODE_SIZE);
     pntS = SDELAYMALLOC(MAX_DELAY_CODE_SIZE);
-  } else {
+  }
+  else {
     DEBUG_OPCODE("Realloc MAX_DELAY_CODE_SIZE=%d\n", MAX_DELAY_CODE_SIZE);
     pntS = SDELAYREALLOC(cpuDelay, MAX_DELAY_CODE_SIZE, MALLOC_CAP_8BIT);
   }
@@ -398,7 +399,7 @@ typedef struct
 
 } sUsbContStruct;
 
-sUsbContStruct *current;
+sUsbContStruct* current;
 
 
 #ifdef WR_SIMULTA
@@ -508,18 +509,21 @@ void repack() {
     if (transmit_bits_buffer_store[k] == 0) {
       if (last == USB_LS_J || last == USB_LS_S) {
         last = USB_LS_K;
-      } else {
+      }
+      else {
         last = USB_LS_J;
       }
       cntOnes = 0;
-    } else if (transmit_bits_buffer_store[k] == 1) {
+    }
+    else if (transmit_bits_buffer_store[k] == 1) {
       cntOnes++;
       if (cntOnes == 6) {
         transmit_NRZI_buffer[transmit_NRZI_buffer_cnt] = last;
         transmit_NRZI_buffer_cnt++;
         if (last == USB_LS_J) {
           last = USB_LS_K;
-        } else {
+        }
+        else {
           last = USB_LS_J;
         }
         cntOnes = 0;
@@ -606,7 +610,8 @@ int parse_received_NRZI_buffer() {
     if (tm < 2 || (smb == 0)) {
       //terr+=tm<4?tm : 4;
       terr += tm;
-    } else {
+    }
+    else {
       //terr = 0;
       int delta = ((((curr + terr) & 0xff)) * TIME_MULT + TIME_SCALE / 2) / TIME_SCALE;
 
@@ -616,11 +621,13 @@ int parse_received_NRZI_buffer() {
         if (prev_smb != smb) {
           if (cntOnes != 6) {
             current_res = current_res * 2 + 0;
-          } else {
+          }
+          else {
             incc = 0;
           }
           cntOnes = 0;
-        } else {
+        }
+        else {
           current_res = current_res * 2 + 1;
           cntOnes++;
         }
@@ -663,7 +670,8 @@ int parse_received_NRZI_buffer() {
   }
   if (rem == 0x800d) {
     return T_NEED_ACK;
-  } else {
+  }
+  else {
     return T_CHK_ERR;
   }
 }
@@ -687,7 +695,7 @@ void sendOnly() {
 #ifdef WR_SIMULTA
     GPIO.out = sndA[transmit_NRZI_buffer[k]];
 #else
-    *snd[transmit_NRZI_buffer[k]][0] = DM_PIN_M;
+    * snd[transmit_NRZI_buffer[k]][0] = DM_PIN_M;
     *snd[transmit_NRZI_buffer[k]][1] = DP_PIN_M;
 #endif
   }
@@ -698,7 +706,7 @@ void sendOnly() {
 
 void sendRecieveNParse() {
   register uint32_t _R3;
-  register uint16_t *STORE = received_NRZI_buffer;
+  register uint16_t* STORE = received_NRZI_buffer;
   //__disable_irq();
   sendOnly();
   register uint32_t _R4;  // = READ_BOTH_PINS;
@@ -784,7 +792,8 @@ void ACK() {
     repack();
     memcpy(ACK_BUFF, transmit_NRZI_buffer, transmit_NRZI_buffer_cnt);
     ACK_BUFF_CNT = transmit_NRZI_buffer_cnt;
-  } else {
+  }
+  else {
     memcpy(transmit_NRZI_buffer, ACK_BUFF, ACK_BUFF_CNT);
     transmit_NRZI_buffer_cnt = ACK_BUFF_CNT;
   }
@@ -800,39 +809,48 @@ void timerCallBack() {
     current->wires_last_state = READ_BOTH_PINS >> 8;
     if (current->wires_last_state == M_ONE) {
       // low speed
-    } else if (current->wires_last_state == P_ONE) {
+    }
+    else if (current->wires_last_state == P_ONE) {
       //high speed
-    } else if (current->wires_last_state == 0x00) {
+    }
+    else if (current->wires_last_state == 0x00) {
       // not connected
-    } else if (current->wires_last_state == (M_ONE + P_ONE)) {
+    }
+    else if (current->wires_last_state == (M_ONE + P_ONE)) {
       //????
     }
     current->bComplete = 1;
-  } else if (current->cb_Cmd == CB_RESET) {
+  }
+  else if (current->cb_Cmd == CB_RESET) {
     SOF();
     sendRecieveNParse();
     SET_O;
     SE_0;
     current->cmdTimeOut = 31;
     current->cb_Cmd = CB_WAIT0;
-  } else if (current->cb_Cmd == CB_WAIT0) {
+  }
+  else if (current->cb_Cmd == CB_WAIT0) {
     if (current->cmdTimeOut > 0) {
       current->cmdTimeOut--;
-    } else {
+    }
+    else {
       //sendRecieveNParse();
       current->bComplete = 1;
     }
-  } else if (current->cb_Cmd == CB_WAIT1) {
+  }
+  else if (current->cb_Cmd == CB_WAIT1) {
     SOF();
     if (current->cmdTimeOut > 0) {
       current->cmdTimeOut--;
-    } else {
+    }
+    else {
       sendRecieveNParse();
       current->wires_last_state = READ_BOTH_PINS >> 8;
       current->bComplete = 1;
     }
-  } else if (current->cb_Cmd == CB_POWER) {
-// for TEST
+  }
+  else if (current->cb_Cmd == CB_POWER) {
+    // for TEST
 #ifdef TEST
     SOF();
     sendRecieve();
@@ -845,10 +863,12 @@ void timerCallBack() {
     current->cmdTimeOut = 2;
     current->cb_Cmd = CB_WAIT1;
 #endif
-  } else if (current->cb_Cmd == CB_TICK) {
+  }
+  else if (current->cb_Cmd == CB_TICK) {
     SOF();
     current->bComplete = 1;
-  } else if (current->cb_Cmd == CB_3) {
+  }
+  else if (current->cb_Cmd == CB_3) {
     SOF();
     pu_Addr(current->rq.cmd, current->rq.addr, current->rq.eop);
     pu_Cmd(current->rq.dataCmd, current->rq.bmRequestType, current->rq.bmRequest, current->rq.wValue, current->rq.wIndex, current->rq.wLen);
@@ -857,16 +877,19 @@ void timerCallBack() {
       current->cb_Cmd = CB_4;
       current->numb_reps_errors_allowed = 8;
       return;
-    } else {
+    }
+    else {
       current->numb_reps_errors_allowed--;
       if (current->numb_reps_errors_allowed > 0) {
         return;
-      } else {
+      }
+      else {
         current->cb_Cmd = CB_TICK;
         current->bComplete = 1;
       }
     }
-  } else if (current->cb_Cmd == CB_4) {
+  }
+  else if (current->cb_Cmd == CB_4) {
     SOF();
     pu_Addr(T_OUT, current->rq.addr, current->rq.eop);
     //reB();
@@ -883,16 +906,19 @@ void timerCallBack() {
     sendRecieveNParse();
     if (received_NRZI_buffer_bytesCnt < SMALL_NO_DATA && received_NRZI_buffer_bytesCnt > SMALL_NO_DATA / 4) {
       ACK();
-    } else {
+    }
+    else {
       current->numb_reps_errors_allowed--;
       if (current->numb_reps_errors_allowed > 0) {
         return;
-      } else {
+      }
+      else {
       }
     }
     current->cb_Cmd = CB_TICK;
     current->bComplete = 1;
-  } else if (current->cb_Cmd == CB_5) {
+  }
+  else if (current->cb_Cmd == CB_5) {
     SOF();
     pu_Addr(current->rq.cmd, current->rq.addr, current->rq.eop);
     pu_Cmd(current->rq.dataCmd, current->rq.bmRequestType, current->rq.bmRequest, current->rq.wValue, current->rq.wIndex, current->rq.wLen);
@@ -905,7 +931,8 @@ void timerCallBack() {
       current->numb_reps_errors_allowed = 4;
       current->counterAck++;
       return;
-    } else {
+    }
+    else {
       //SOF();
       current->counterNAck++;
       current->numb_reps_errors_allowed--;
@@ -913,12 +940,14 @@ void timerCallBack() {
         // current->cb_Cmd = CB_TICK;
         current->acc_decoded_resp_counter = 0;
         return;
-      } else {
+      }
+      else {
         current->cb_Cmd = CB_TICK;
         current->bComplete = 1;
       }
     }
-  } else if (current->cb_Cmd == CB_6) {
+  }
+  else if (current->cb_Cmd == CB_6) {
     SOF();
     pu_Addr(T_IN, current->rq.addr, current->rq.eop);
     //setup
@@ -940,14 +969,17 @@ void timerCallBack() {
         if ((current->in_data_flip_flop & 1) == 1) {
           if (sval == T_DATA1) {
 
-          } else {
+          }
+          else {
             current->cb_Cmd = CB_7;
             return;
           }
-        } else {
+        }
+        else {
           if (sval == T_DATA0) {
 
-          } else {
+          }
+          else {
             current->cb_Cmd = CB_7;
             return;
           }
@@ -966,27 +998,32 @@ void timerCallBack() {
           current->asckedReceiveBytes = 0;
           current->cb_Cmd = CB_TICK;
           current->bComplete = 1;
-        } else {
+        }
+        else {
           current->cb_Cmd = CB_7;
           return;
         }
-      } else {
+      }
+      else {
         current->acc_decoded_resp_counter = 0;
         current->asckedReceiveBytes = 0;
         current->cb_Cmd = CB_TICK;
         current->bComplete = 1;
         return;
       }
-    } else {
+    }
+    else {
       current->numb_reps_errors_allowed--;
       if (current->numb_reps_errors_allowed > 0) {
         return;
-      } else {
+      }
+      else {
         current->cb_Cmd = CB_TICK;
         current->bComplete = 1;
       }
     }
-  } else if (current->cb_Cmd == CB_7) {
+  }
+  else if (current->cb_Cmd == CB_7) {
     SOF();
     pu_Addr(T_IN, current->rq.addr, current->rq.eop);
     //setup
@@ -997,14 +1034,16 @@ void timerCallBack() {
       return;
     }
     current->cb_Cmd = CB_8;
-  } else if (current->cb_Cmd == CB_8) {
+  }
+  else if (current->cb_Cmd == CB_8) {
     SOF();
     pu_Addr(T_OUT, current->rq.addr, current->rq.eop);
     pu_ShortCmd(T_DATA1);
     sendOnly();
     current->cb_Cmd = CB_TICK;
     current->bComplete = 1;
-  } else if (current->cb_Cmd == CB_2Ack) {
+  }
+  else if (current->cb_Cmd == CB_2Ack) {
     SOF();
     pu_Addr(T_IN, current->rq.addr, current->rq.eop);
     //setup
@@ -1018,7 +1057,8 @@ void timerCallBack() {
     ACK();
     current->cb_Cmd = CB_TICK;
     current->bComplete = 1;
-  } else if (current->cb_Cmd == CB_2) {
+  }
+  else if (current->cb_Cmd == CB_2) {
     SOF();
     pu_Addr(T_IN, current->rq.addr, current->rq.eop);
     //setup
@@ -1044,11 +1084,13 @@ void timerCallBack() {
       current->asckedReceiveBytes = 0;
       current->cb_Cmd = CB_2Ack;
       return;
-    } else {
+    }
+    else {
       current->numb_reps_errors_allowed--;
       if (current->numb_reps_errors_allowed > 0) {
         return;
-      } else {
+      }
+      else {
         current->cb_Cmd = CB_TICK;
         current->bComplete = 1;
       }
@@ -1080,7 +1122,7 @@ void Request(uint8_t cmd, uint8_t addr, uint8_t eop, uint8_t dataCmd, uint8_t bm
 
 
 
-void RequestSend(uint8_t cmd, uint8_t addr, uint8_t eop, uint8_t dataCmd, uint8_t bmRequestType, uint8_t bmRequest, uint16_t wValue, uint16_t wIndex, uint16_t wLen, uint16_t transmitL1Bytes, uint8_t *data) {
+void RequestSend(uint8_t cmd, uint8_t addr, uint8_t eop, uint8_t dataCmd, uint8_t bmRequestType, uint8_t bmRequest, uint16_t wValue, uint16_t wIndex, uint16_t wLen, uint16_t transmitL1Bytes, uint8_t* data) {
   current->rq.cmd = cmd;
   current->rq.addr = addr;
   current->rq.eop = eop;
@@ -1111,38 +1153,38 @@ void RequestIn(uint8_t cmd, uint8_t addr, uint8_t eop, uint16_t waitForBytes) {
 }
 
 
-void (*usbMess)(uint8_t src, uint8_t len, uint8_t *data) = NULL;
+void (*usbMess)(uint8_t src, uint8_t len, uint8_t* data) = NULL;
 void set_usb_mess_cb(onusbmesscb_t onUSBMessCb) {
   usbMess = onUSBMessCb;
 }
 
 
 
-void (*onConfigDescCb)(uint8_t ref, int cfgCount, void *lcfg, size_t len);
+void (*onConfigDescCb)(uint8_t ref, int cfgCount, void* lcfg, size_t len);
 void set_onconfigdesc_cb(onconfigdesccb_t cb) {
   onConfigDescCb = cb;
 }
 
 
-void (*onIfaceDescCb)(uint8_t ref, int cfgCount, int sIntfCount, void *sIntf, size_t len);
+void (*onIfaceDescCb)(uint8_t ref, int cfgCount, int sIntfCount, void* sIntf, size_t len);
 void set_onifacedesc_cb(onifacedesccb_t cb) {
   onIfaceDescCb = cb;
 }
 
 
-void (*onHIDDevDescCb)(uint8_t ref, int cfgCount, int sIntfCount, int hidCount, void *hid, size_t len);
+void (*onHIDDevDescCb)(uint8_t ref, int cfgCount, int sIntfCount, int hidCount, void* hid, size_t len);
 void set_onhiddevdesc_cb(onhiddevdesccb_t cb) {
   onHIDDevDescCb = cb;
 }
 
 
-void (*onEPDescCb)(uint8_t ref, int cfgCount, int epdCount, void *epd, size_t len);
+void (*onEPDescCb)(uint8_t ref, int cfgCount, int epdCount, void* epd, size_t len);
 void set_onepdesc_cb(onepdesccb_t cb) {
   onEPDescCb = cb;
 }
 
 
-void (*onDetectCB)(uint8_t usbNum, void *device) = NULL;
+void (*onDetectCB)(uint8_t usbNum, void* device) = NULL;
 void set_ondetect_cb(ondetectcb_t cb) {
   onDetectCB = cb;
 }
@@ -1168,28 +1210,34 @@ void fsm_Mashine() {
       current->cmdTimeOut = 100 + current->selfNum * 73;
       current->cb_Cmd = CB_WAIT0;
       current->fsm_state = 2;
-    } else {
+    }
+    else {
       current->fsm_state = 0;
       current->cb_Cmd = CB_CHECK;
     }
-  } else if (current->fsm_state == 2) {
+  }
+  else if (current->fsm_state == 2) {
     current->cb_Cmd = CB_RESET;
     current->fsm_state = 3;
-  } else if (current->fsm_state == 3) {
+  }
+  else if (current->fsm_state == 3) {
     current->cb_Cmd = CB_POWER;
 #ifdef TEST
     current->fsm_state = 3;
 #else
     current->fsm_state = 4;
 #endif
-  } else if (current->fsm_state == 4) {
+  }
+  else if (current->fsm_state == 4) {
     Request(T_SETUP, ZERO_USB_ADDRESS, 0b0000, T_DATA0, 0x80, 0x6, 0x0100, 0x0000, 0x0012, 0x0012);
     current->fsm_state = 5;
-  } else if (current->fsm_state == 5) {
+  }
+  else if (current->fsm_state == 5) {
     if (current->acc_decoded_resp_counter == 0x12) {
       memcpy(&current->desc, current->acc_decoded_resp, 0x12);
       current->ufPrintDesc |= 1;
-    } else {
+    }
+    else {
       if (current->numb_reps_errors_allowed <= 0) {
         current->fsm_state = 0;
         return;
@@ -1199,52 +1247,63 @@ void fsm_Mashine() {
     Request(T_SETUP, ZERO_USB_ADDRESS, 0b0000, T_DATA0, 0x00, 0x5, 0x0000 + ASSIGNED_USB_ADDRESS, 0x0000, 0x0000, 0x0000);
     current->fsm_state = 6;
 
-  } else if (current->fsm_state == 6) {
+  }
+  else if (current->fsm_state == 6) {
     current->cmdTimeOut = 5;
     current->cb_Cmd = CB_WAIT1;
     current->fsm_state = 7;
-  } else if (current->fsm_state == 7) {
+  }
+  else if (current->fsm_state == 7) {
     Request(T_SETUP, ASSIGNED_USB_ADDRESS, 0b0000, T_DATA0, 0x80, 0x6, 0x0200, 0x0000, 0x0009, 0x0009);
     current->fsm_state = 8;
-  } else if (current->fsm_state == 8) {
+  }
+  else if (current->fsm_state == 8) {
     if (current->acc_decoded_resp_counter == 0x9) {
       memcpy(&current->cfg, current->acc_decoded_resp, 0x9);
       current->ufPrintDesc |= 2;
       Request(T_SETUP, ASSIGNED_USB_ADDRESS, 0b0000, T_DATA0, 0x80, 0x6, 0x0200, 0x0000, current->cfg.wLength, current->cfg.wLength);
       current->fsm_state = 9;
-    } else {
+    }
+    else {
       current->fsm_state = 0;
       return;
     }
-  } else if (current->fsm_state == 9) {
+  }
+  else if (current->fsm_state == 9) {
     if (current->acc_decoded_resp_counter == current->cfg.wLength) {
       current->ufPrintDesc |= 4;
       current->descrBufferLen = current->acc_decoded_resp_counter;
       memcpy(current->descrBuffer, current->acc_decoded_resp, current->descrBufferLen);
       current->fsm_state = 97;
-    } else {
+    }
+    else {
       current->cmdTimeOut = 5;
       current->cb_Cmd = CB_WAIT1;
       current->fsm_state = 7;
     }
-  } else if (current->fsm_state == 97) {
+  }
+  else if (current->fsm_state == 97) {
     Request(T_SETUP, ASSIGNED_USB_ADDRESS, 0b0000, T_DATA0, 0x00, 0x9, 0x0001, 0x0000, 0x0000, 0x0000);
     current->fsm_state = 98;
-  } else if (current->fsm_state == 98) {
+  }
+  else if (current->fsm_state == 98) {
     // config interfaces??
     Request(T_SETUP, ASSIGNED_USB_ADDRESS, 0b0000, T_DATA0, 0x21, 0xa, 0x0000, 0x0000, 0x0000, 0x0000);
     current->fsm_state = 99;
-  } else if (current->fsm_state == 99) {
+  }
+  else if (current->fsm_state == 99) {
     if (current->flags_new != current->flags) {
       current->flags = current->flags_new;
       RequestSend(T_SETUP, ASSIGNED_USB_ADDRESS, 0b0000, T_DATA0, 0x21, 0x9, 0x0200, 0x0000, 0x0001, 0x0001, &current->flags);
     }
     current->fsm_state = 100;
-  } else if (current->fsm_state == 100) {
+  }
+  else if (current->fsm_state == 100) {
     if (onLedBlinkCB) onLedBlinkCB(0);
     RequestIn(T_IN, ASSIGNED_USB_ADDRESS, 1, 8);
     current->fsm_state = 101;
-  } else if (current->fsm_state == 101) {
+  }
+  else if (current->fsm_state == 101) {
     if (current->acc_decoded_resp_counter >= 1) {
       usbMess(current->selfNum * 4 + 0, current->acc_decoded_resp_counter, current->acc_decoded_resp);
       if (onLedBlinkCB) onLedBlinkCB(1);
@@ -1252,12 +1311,14 @@ void fsm_Mashine() {
     if (current->epCount >= 2) {
       RequestIn(T_IN, ASSIGNED_USB_ADDRESS, 2, 8);
       current->fsm_state = 102;
-    } else {
+    }
+    else {
       current->cmdTimeOut = 3;
       current->cb_Cmd = CB_WAIT1;
       current->fsm_state = 104;
     }
-  } else if (current->fsm_state == 102) {
+  }
+  else if (current->fsm_state == 102) {
     if (current->acc_decoded_resp_counter >= 1) {
       usbMess(current->selfNum * 4 + 1, current->acc_decoded_resp_counter, current->acc_decoded_resp);
       if (onLedBlinkCB) onLedBlinkCB(1);
@@ -1265,7 +1326,8 @@ void fsm_Mashine() {
     current->cmdTimeOut = 2;
     current->cb_Cmd = CB_WAIT1;
     current->fsm_state = 104;
-  } else if (current->fsm_state == 104) {
+  }
+  else if (current->fsm_state == 104) {
     current->cmdTimeOut = 4;
     current->cb_Cmd = CB_WAIT1;
 #ifdef DEBUG_REPEAT
@@ -1280,7 +1342,8 @@ void fsm_Mashine() {
       return;
     }
     current->fsm_state = 99;
-  } else {
+  }
+  else {
     current->cmdTimeOut = 2;
     current->cb_Cmd = CB_WAIT1;
     current->fsm_state = 0;
@@ -1342,7 +1405,7 @@ int64_t get_system_time_us() {
 
 
 float testDelay6(float freq_MHz) {
-// 6 bits must take 4.0 uSec
+  // 6 bits must take 4.0 uSec
 #define SEND_BITS 120
 #define REPS 40
   float res = 1;
@@ -1397,13 +1460,16 @@ void initStates(int DP0, int DM0, int DP1, int DM1, int DP2, int DM2, int DP3, i
     if (k == 0) {
       current->DP = DP0;
       current->DM = DM0;
-    } else if (k == 1) {
+    }
+    else if (k == 1) {
       current->DP = DP1;
       current->DM = DM1;
-    } else if (k == 2) {
+    }
+    else if (k == 2) {
       current->DP = DP2;
       current->DM = DM2;
-    } else if (k == 3) {
+    }
+    else if (k == 3) {
       current->DP = DP3;
       current->DM = DM3;
     }
@@ -1449,7 +1515,7 @@ void initStates(int DP0, int DM0, int DP1, int DM1, int DP2, int DM2, int DP3, i
       printf("READ_BOTH_PINS = %04x\n", READ_BOTH_PINS);
 
       if (!calibrated) {
-//calibrate delay divide 2
+        //calibrate delay divide 2
 #define DELAY_CORR 2
         int uTime = 254;
         int dTime = 0;
@@ -1483,7 +1549,8 @@ void initStates(int DP0, int DM0, int DP1, int DM1, int DP2, int DM2, int DP3, i
           }
           if (cS < OPT_TIME) {
             dTime = TRANSMIT_TIME_DELAY;
-          } else {
+          }
+          else {
             uTime = TRANSMIT_TIME_DELAY;
           }
         }
@@ -1491,10 +1558,12 @@ void initStates(int DP0, int DM0, int DP1, int DM1, int DP2, int DM2, int DP3, i
         setCPUDelay(TRANSMIT_TIME_DELAY);
         printf("TRANSMIT_TIME_DELAY = %d time = %f error = %f%% \n", TRANSMIT_TIME_DELAY, cS_opt, (cS_opt - OPT_TIME) / OPT_TIME * 100);
       }
-    } else {
+    }
+    else {
       if (current->DP == -1 && current->DM == -1) {
         printf("USB#%d is disabled by user configuration\n", k);
-      } else {
+      }
+      else {
         printf("USB#%d (pins %d %d) has errors and will be disabled !\n", k, current->DP, current->DM);
       }
     }
@@ -1540,17 +1609,17 @@ void printState() {
   static int cntl = 0;
   cntl++;
   int ref = cntl % NUM_USB;
-  sUsbContStruct *pcurrent = &current_usb[ref];
+  sUsbContStruct* pcurrent = &current_usb[ref];
   if (!pcurrent->isValid) return;
   if ((cntl % 800) < NUM_USB) {
 #ifdef DEBUG_ALL
     printf("USB%d: Ack = %d Nack = %d %02x pcurrent->cb_Cmd = %d  state = %d epCount = %d --",
-           cntl % NUM_USB, pcurrent->counterAck,
-           pcurrent->counterNAck,
-           pcurrent->wires_last_state,
-           pcurrent->cb_Cmd,
-           pcurrent->fsm_state,
-           pcurrent->epCount);
+      cntl % NUM_USB, pcurrent->counterAck,
+      pcurrent->counterNAck,
+      pcurrent->wires_last_state,
+      pcurrent->cb_Cmd,
+      pcurrent->fsm_state,
+      pcurrent->epCount);
     for (int k = 0; k < 20; k++) {
       printf("%04x ", debug_buff[k]);
     }
@@ -1561,8 +1630,9 @@ void printState() {
   if (pcurrent->ufPrintDesc & 1) {
     pcurrent->ufPrintDesc &= ~(uint32_t)1;
     if (onDetectCB) {
-      onDetectCB(ref, (void *)&pcurrent->desc);
-    } else {
+      onDetectCB(ref, (void*)&pcurrent->desc);
+    }
+    else {
 #ifdef DEBUG_ALL
       printf("desc.bcdDevice       = %02x\n", pcurrent->desc.bcdDevice);
       printf("desc.iManufacturer   = %02x\n", pcurrent->desc.iManufacturer);
@@ -1602,7 +1672,7 @@ void printState() {
           if (onConfigDescCb) onConfigDescCb(ref, cfgCount, &pcurrent->descrBuffer[pos], len);
           else {
 #ifdef DEBUG_ALL
-            sCfgDesc *lcfg = (sCfgDesc *)&pcurrent->descrBuffer[pos];
+            sCfgDesc* lcfg = (sCfgDesc*)&pcurrent->descrBuffer[pos];
             printf("Config Descriptor #%d\n", cfgCount);
             printf("  cfg.wLength         = 0x%02x\n", lcfg->wLength);
             printf("  cfg.bNumIntf        = 0x%02x\n", lcfg->bNumIntf);
@@ -1610,13 +1680,14 @@ void printState() {
             printf("  cfg.bMaxPower       = %d\n", lcfg->bMaxPower);
 #endif
           }
-        } else if (type == 0x4) {
+        }
+        else if (type == 0x4) {
           // Interface Descriptor
           sIntfCount++;
           if (onIfaceDescCb) onIfaceDescCb(ref, cfgCount, sIntfCount, &pcurrent->descrBuffer[pos], len);
           else {
 #ifdef DEBUG_ALL
-            sIntfDesc *sIntf = (sIntfDesc *)&pcurrent->descrBuffer[pos];
+            sIntfDesc* sIntf = (sIntfDesc*)&pcurrent->descrBuffer[pos];
             printf("    Interface Descriptor #%d\n", sIntfCount);
             printf("      sIntf.bLength     = 0x%02x\n", sIntf->bLength);
             printf("      sIntf.bType       = 0x%02x\n", sIntf->bType);
@@ -1629,13 +1700,14 @@ void printState() {
             printf("      sIntf.iIndex      = 0x%02x\n", sIntf->iIndex);
 #endif
           }
-        } else if (type == 0x21) {
+        }
+        else if (type == 0x21) {
           // iInterface (HID Device Descriptor)
           hidCount++;
           if (onHIDDevDescCb) onHIDDevDescCb(ref, cfgCount, sIntfCount, hidCount, &pcurrent->descrBuffer[pos], len);
           else {
 #ifdef DEBUG_ALL
-            HIDDescriptor *hid = (HIDDescriptor *)&pcurrent->descrBuffer[pos];
+            HIDDescriptor* hid = (HIDDescriptor*)&pcurrent->descrBuffer[pos];
             printf("        HID Device Descriptor #%d\n", hidCount);
             printf("          hid.bLength               = 0x%02x\n", hid->bLength);
             printf("          hid.bDescriptorType       = 0x%02x\n", hid->bDescriptorType);
@@ -1647,13 +1719,14 @@ void printState() {
             printf("          hid.wItemLengthH          = 0x%02x\n", hid->wItemLengthH);
 #endif
           }
-        } else if (type == 0x5) {
+        }
+        else if (type == 0x5) {
           // EndPoint Descriptor
           pcurrent->epCount++;
           if (onEPDescCb) onEPDescCb(ref, cfgCount, pcurrent->epCount, &pcurrent->descrBuffer[pos], len);
           else {
 #ifdef DEBUG_ALL
-            sEPDesc *epd = (sEPDesc *)&pcurrent->descrBuffer[pos];
+            sEPDesc* epd = (sEPDesc*)&pcurrent->descrBuffer[pos];
             printf("      EndPoint Descriptor #%d\n", pcurrent->epCount);
             printf("        epd.bLength       = 0x%02x\n", epd->bLength);
             printf("        epd.bType         = 0x%02x\n", epd->bType);

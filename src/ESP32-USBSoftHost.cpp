@@ -15,16 +15,16 @@ struct USBMessage
   uint8_t data[0x8];
 };
 
-void (*printDataCB)(uint8_t usbNum, uint8_t byte_depth, uint8_t *data, uint8_t data_len) = NULL;
+void (*printDataCB)(uint8_t usbNum, uint8_t byte_depth, uint8_t* data, uint8_t data_len) = NULL;
 
 void set_print_cb(printcb_t cb)
 {
   printDataCB = cb;
 }
 
-void Default_USB_DetectCB(uint8_t usbNum, void *dev)
+void Default_USB_DetectCB(uint8_t usbNum, void* dev)
 {
-  sDevDesc *device = (sDevDesc *)dev;
+  sDevDesc* device = (sDevDesc*)dev;
   printf("New device detected on USB#%d\n", usbNum);
   printf("desc.bcdUSB             = 0x%04x\n", device->bcdUSB);
   printf("desc.bDeviceClass       = 0x%02x\n", device->bDeviceClass);
@@ -42,7 +42,7 @@ void Default_USB_DetectCB(uint8_t usbNum, void *dev)
   // }
 }
 
-void Default_USB_DataCB(uint8_t usbNum, uint8_t byte_depth, uint8_t *data, uint8_t data_len)
+void Default_USB_DataCB(uint8_t usbNum, uint8_t byte_depth, uint8_t* data, uint8_t data_len)
 {
   // if( myListenUSBPort != usbNum ) return;
   printf("in: ");
@@ -53,9 +53,9 @@ void Default_USB_DataCB(uint8_t usbNum, uint8_t byte_depth, uint8_t *data, uint8
   printf("\n");
 }
 
-void Default_USB_ConfigDescCB(uint8_t ref, int cfgCount, void *cfg, size_t len)
+void Default_USB_ConfigDescCB(uint8_t ref, int cfgCount, void* cfg, size_t len)
 {
-  sCfgDesc *lcfg = (sCfgDesc *)cfg;
+  sCfgDesc* lcfg = (sCfgDesc*)cfg;
   printf("Config Descriptor #%d\n", cfgCount);
   printf("  cfg.wLength         = 0x%02x\n", lcfg->wLength);
   printf("  cfg.bNumIntf        = 0x%02x\n", lcfg->bNumIntf);
@@ -63,9 +63,9 @@ void Default_USB_ConfigDescCB(uint8_t ref, int cfgCount, void *cfg, size_t len)
   printf("  cfg.bMaxPower       = %d\n", lcfg->bMaxPower);
 }
 
-void Default_USB_IfaceDescCb(uint8_t ref, int cfgCount, int sIntfCount, void *Intf, size_t len)
+void Default_USB_IfaceDescCb(uint8_t ref, int cfgCount, int sIntfCount, void* Intf, size_t len)
 {
-  sIntfDesc *sIntf = (sIntfDesc *)Intf;
+  sIntfDesc* sIntf = (sIntfDesc*)Intf;
   printf("    Interface Descriptor #%d\n", sIntfCount);
   printf("      sIntf.bLength     = 0x%02x\n", sIntf->bLength);
   printf("      sIntf.bType       = 0x%02x\n", sIntf->bType);
@@ -78,9 +78,9 @@ void Default_USB_IfaceDescCb(uint8_t ref, int cfgCount, int sIntfCount, void *In
   printf("      sIntf.iIndex      = 0x%02x\n", sIntf->iIndex);
 }
 
-void Default_USB_HIDDevDescCb(uint8_t ref, int cfgCount, int sIntfCount, int hidCount, void *vhid, size_t len)
+void Default_USB_HIDDevDescCb(uint8_t ref, int cfgCount, int sIntfCount, int hidCount, void* vhid, size_t len)
 {
-  HIDDescriptor *hid = (HIDDescriptor *)vhid;
+  HIDDescriptor* hid = (HIDDescriptor*)vhid;
   printf("        HID Device Descriptor #%d\n", hidCount);
   printf("          hid.bLength               = 0x%02x\n", hid->bLength);
   printf("          hid.bDescriptorType       = 0x%02x\n", hid->bDescriptorType);
@@ -92,9 +92,9 @@ void Default_USB_HIDDevDescCb(uint8_t ref, int cfgCount, int sIntfCount, int hid
   printf("          hid.wItemLengthH          = 0x%02x\n", hid->wItemLengthH);
 }
 
-void Default_USB_EPDescCb(uint8_t ref, int cfgCount, int epdCount, void *vepd, size_t len)
+void Default_USB_EPDescCb(uint8_t ref, int cfgCount, int epdCount, void* vepd, size_t len)
 {
-  sEPDesc *epd = (sEPDesc *)vepd;
+  sEPDesc* epd = (sEPDesc*)vepd;
   printf("      EndPoint Descriptor #%d\n", epdCount);
   printf("        epd.bLength       = 0x%02x\n", epd->bLength);
   printf("        epd.bType         = 0x%02x\n", epd->bType);
@@ -115,7 +115,7 @@ typedef struct
 } timer_event_t;
 static xQueueHandle timer_queue = NULL;
 
-void IRAM_ATTR timer_group0_isr(void *para)
+void IRAM_ATTR timer_group0_isr(void* para)
 {
   // this is mainly a group-timer layer for esp-idf 3.x
   // most of this is handled by the SDK since esp-idf 4.x
@@ -142,7 +142,7 @@ void IRAM_ATTR timer_group0_isr(void *para)
 
 #else
 
-void IRAM_ATTR timer_group0_isr(void *para)
+void IRAM_ATTR timer_group0_isr(void* para)
 {
   timer_group_clr_intr_status_in_isr(TIMER_GROUP_0, TIMER_0);
   // taskENTER_CRITICAL();
@@ -222,10 +222,10 @@ bool USB_SOFT_HOST::_init()
   Serial.println("Setting up pins");
 
   initStates(
-      (gpio_num_t)USB_Pins_Config.dp0, (gpio_num_t)USB_Pins_Config.dm0,
-      (gpio_num_t)USB_Pins_Config.dp1, (gpio_num_t)USB_Pins_Config.dm1,
-      (gpio_num_t)USB_Pins_Config.dp2, (gpio_num_t)USB_Pins_Config.dm2,
-      (gpio_num_t)USB_Pins_Config.dp3, (gpio_num_t)USB_Pins_Config.dm3);
+    (gpio_num_t)USB_Pins_Config.dp0, (gpio_num_t)USB_Pins_Config.dm0,
+    (gpio_num_t)USB_Pins_Config.dp1, (gpio_num_t)USB_Pins_Config.dm1,
+    (gpio_num_t)USB_Pins_Config.dp2, (gpio_num_t)USB_Pins_Config.dm2,
+    (gpio_num_t)USB_Pins_Config.dp3, (gpio_num_t)USB_Pins_Config.dm3);
 
   Serial.printf("Seleting SCL (blink) Pin #%d\n", blink_gpio);
 
@@ -244,15 +244,15 @@ bool USB_SOFT_HOST::_init()
   config.auto_reload = (timer_autoreload_t)1; // fix for ¬invalid conversion from 'int' to 'timer_autoreload_t'¬ thanks rudi ;-)
 #elif defined ESP32C3
   timer_config_t config =
-      {
-          .clk_src = TIMER_SRC_CLK_XTAL, // TIMER_SRC_CLK_DEFAULT ?
-          .alarm_en = TIMER_ALARM_EN,    // enable timer alarm
-          .counter_en = TIMER_PAUSE,     // starts counting counter once timer_init called
-          .intr_type = TIMER_INTR_MAX,
-          .counter_dir = TIMER_COUNT_UP,      // counts from 0 to counter value
-          .auto_reload = TIMER_AUTORELOAD_EN, // reloads counter automatically
-          .divider = TIMER_DIVIDER};
-// #elif defined ESP32S2
+  {
+      .clk_src = TIMER_SRC_CLK_XTAL, // TIMER_SRC_CLK_DEFAULT ?
+      .alarm_en = TIMER_ALARM_EN,    // enable timer alarm
+      .counter_en = TIMER_PAUSE,     // starts counting counter once timer_init called
+      .intr_type = TIMER_INTR_MAX,
+      .counter_dir = TIMER_COUNT_UP,      // counts from 0 to counter value
+      .auto_reload = TIMER_AUTORELOAD_EN, // reloads counter automatically
+      .divider = TIMER_DIVIDER };
+  // #elif defined ESP32S2
 #else
 #error "Invalid board"
 #endif
@@ -264,7 +264,7 @@ bool USB_SOFT_HOST::_init()
   Serial.println("Enable interrupt");
   timer_enable_intr(TIMER_GROUP_0, TIMER_0);
   Serial.println("Register ISR");
-  timer_isr_register(TIMER_GROUP_0, TIMER_0, timer_group0_isr, (void *)TIMER_0, intr_alloc_flags, NULL);
+  timer_isr_register(TIMER_GROUP_0, TIMER_0, timer_group0_isr, (void*)TIMER_0, intr_alloc_flags, NULL);
   Serial.println("Start timer");
   timer_start(TIMER_GROUP_0, TIMER_0);
 
@@ -319,7 +319,7 @@ void USB_SOFT_HOST::setActivityBlinker(onledblinkcb_t onActivityCB)
 }
 
 // called from underlaying C
-void USB_SOFT_HOST::onUSBMessageDecode(uint8_t src, uint8_t len, uint8_t *data)
+void USB_SOFT_HOST::onUSBMessageDecode(uint8_t src, uint8_t len, uint8_t* data)
 {
   struct USBMessage msg;
   msg.src = src;
@@ -328,7 +328,7 @@ void USB_SOFT_HOST::onUSBMessageDecode(uint8_t src, uint8_t len, uint8_t *data)
   {
     msg.data[k] = data[k];
   }
-  xQueueSend(usb_msg_queue, (void *)&msg, (TickType_t)0);
+  xQueueSend(usb_msg_queue, (void*)&msg, (TickType_t)0);
 }
 
 void (*USB_SOFT_HOST::ticker)() = nullptr;
@@ -363,7 +363,7 @@ void USB_SOFT_HOST::TimerResume()
   }
 }
 
-void USB_SOFT_HOST::TimerTask(void *arg)
+void USB_SOFT_HOST::TimerTask(void* arg)
 {
   while (1)
   {

@@ -15,11 +15,11 @@
 // recursive repeat
 template <size_t N> inline void nop_pad()
 {
-  nop_pad<N-1>();
+  nop_pad<N - 1>();
   asm volatile ("nop");
 }
 // zero nop case
-template <> inline void nop_pad<0>()  { }
+template <> inline void nop_pad<0>() {}
 
 // shorthand macro for function generation
 #define nop(opnum) void IRAM_ATTR op##opnum(){nop_pad<opnum>();}
